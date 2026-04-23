@@ -16,6 +16,7 @@ The exercises in this repository focus on developing skills in:
 * Pivot tables and summaries
 * Basic data analysis techniques
 * Dataset preparation for analysis
+* Management tracking systems
 
 ## Repository Structure
 
