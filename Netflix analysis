@@ -1,0 +1,141 @@
+# Netflix Content Analysis in Microsoft Excel
+
+
+
+An end-to-end Excel analysis of the Netflix titles catalogue: data cleaning, pivot-style summaries, charts, interactive dashboards, findings and recommendations. Everything lives in one workbook, and every number is a live formula that traces back to the cleaned data.
+
+---
+
+## At a glance
+
+| | |
+|---|---|
+| **Dataset** | `Dataset.csv`, 8,790 raw records, 10 columns |
+| **Clean dataset** | 8,786 records (6,123 Movies, 2,663 TV Shows) |
+| **Coverage** | Titles added 1 Jan 2008 to 25 Sep 2021; released 1925 to 2021 |
+| **Tool** | Microsoft Excel (.xlsx), no macros, no add-ins |
+| **Tasks covered** | All six (the internship requires any four) |
+| **Main file** | `Netflix_Data_Visualization_Workbook.xlsx` |
+
+---
+
+## What is in the workbook
+
+The workbook has 19 sheets. Red tabs hold documentation, dark tabs hold data and analysis.
+
+| Sheet | Purpose | Task |
+|---|---|---|
+| `README` | Sheet index and usage notes | All |
+| `Exec_Summary` | Headline findings and deliverables map | All |
+| `Cleaning_Log` | All 17 cleaning checks, removed records, data dictionary | 1 |
+| `Cleaned_Data` | Analysis-ready Excel Table `tblNetflix` with helper columns | All |
+| `Lookups` | Rating to audience-group mapping (editable) | 5, 6 |
+| `Task1_Doc` ... `Task6_Doc` | Objective, workflow, live key figures, findings, recommendations | 1 to 6 |
+| `T1_Pivots` | Four summary tables and basic charts | 1 |
+| `T2_Content_Dashboard` | Movies vs TV Shows: KPIs, pie and column charts | 2 |
+| `T3_Country` | Country ranking, Type filter, region roll-up | 3 |
+| `T4_Trends` | Release-year and year-added trends, YoY growth, decades | 4 |
+| `T5_Ratings` | Audience rating KPIs, filtered charts | 5 |
+| `T6_Executive` | One-page executive dashboard with filter and recommendations | 6 |
+| `Limitations` | Data limitations and assumptions | All |
+| `Excel_Steps` | How to build native PivotTables, Slicers and a dashboard; formula reference | All |
+
+---
+
+## How to use it
+
+1. **Open in Microsoft Excel** (desktop 2019 or Microsoft 365, or Excel for the web). Google Sheets does not preserve these charts and formatting faithfully, and `MINIFS`/`MAXIFS` need Excel 2019 or later.
+2. Start with `Exec_Summary`, then read the `Task#_Doc` sheet for whichever task you are reviewing.
+3. On `T3_Country`, `T5_Ratings` and `T6_Executive`, change the **yellow cell** (blue text) to `All`, `Movie` or `TV Show`. Tables and charts update immediately.
+4. All figures are formulas (`COUNTIFS`, `SUMIFS`, `AVERAGEIFS`, `INDEX/MATCH`, `RANK`). Click any cell to see where it comes from.
+
+---
+
+## Method
+
+### Task 1: Data cleaning and chart preparation
+
+The file had no blank cells, because missing values had already been replaced with the text "Not Given". Cleaning therefore focused on hidden problems:
+
+| Check | Finding | Action |
+|---|---|---|
+| Duplicate records | 4 records repeated under a different `show_id` (s5965, s5966, s5967, s6530) | Removed the later copy of each |
+| Non-breaking space | "Consequences" ended with character 160, which Excel `TRIM` does not remove | Cleaned with `SUBSTITUTE(...,CHAR(160)," ")` |
+| Line break in a title | s8420 splits into two rows in some imports, creating a false third type "William Wyler" and a total of 8,791 | Replaced with a space |
+| Titles turned into dates | "22-Jul", "15-Aug", "1-Oct" | Restored to "22 July", "15 August", "October 1" ("9-Feb" could not be verified and was left unchanged) |
+| Country placeholder | 421 titles say "Pakistan"; 402 of them have an unknown director (95.5%, against 26% for the US), and include Squid Game and Chicago Party Aunt | 401 records (after de-duplication) reclassified to "Not Given"; original kept in `Country_Original` |
+| Dates and types | `date_added` converted to real dates; type vs duration and rating codes checked | No errors found |
+
+Result: **8,790 raw records became 8,786 clean records.** Four pivot-style tables and four basic charts are on `T1_Pivots`.
+
+> **Why the duplicates are easy to miss:** Excel's default Remove Duplicates compares every column, including `show_id`, which always differs. Untick `show_id` when running it.
+
+### Task 2: Content distribution dashboard
+Pie, column and clustered-column charts with six KPI tiles. Movie length uses `AVERAGEIFS`, `MINIFS` and `MAXIFS` on a numeric duration helper column.
+
+### Task 3: Country-wise dashboard
+Top 20 countries ranked with `COUNTIFS`, a dropdown Type filter, conditional formatting for the top three, and a region roll-up (the region mapping is an editable analyst assumption). "Not Given" is excluded from ranking.
+
+### Task 4: Release trend visualization
+Titles by release year and by year added, with year-over-year growth, cumulative growth, 2016 to 2019 CAGR and decade tables.
+
+### Task 5: Audience rating insights
+The 14 rating codes are grouped into five audience groups (Kids, Older Kids/Family, Teens, Adults, Unrated) through the `Lookups` sheet. Five KPI tiles and filtered charts.
+
+### Task 6: Executive dashboard
+Consolidates Tasks 1 to 5 on one screen with six KPIs, four charts, one filter and the recommendations.
+
+---
+
+## Key findings
+
+| # | Finding |
+|---|---|
+| 1 | **Movies dominate:** 69.7% of titles are movies and 30.3% are TV shows. Two-thirds of TV shows have only one season. |
+| 2 | **A few countries dominate:** of 8,098 titles with a known country, the US has 40.0%, India 13.0% and the UK 7.9%. The top 3 hold 60.9% and the top 10 hold 78.2%. |
+| 3 | **Growth boom, then a pause:** titles added per year grew about 68% a year from 2016 to 2019 (426 to 2,013), then fell 6.7% in 2020. 2021 is a partial year. |
+| 4 | **Recent and adult-oriented:** 70.6% of titles were released in 2015 or later; adult-rated content is 45.6% and kids/family only 23.4%. |
+| 5 | **Format differs by country:** South Korea (77% TV) and Japan (66% TV) are series-led; India is movie-led (92% movies). |
+| 6 | **TV is gaining share of additions:** 25.0% in 2018 to 33.7% in 2021. |
+| 7 | **Metadata gaps:** 688 titles have no usable country and 2,587 (29.4%) have no director. |
+
+## Recommendations
+
+1. **Grow series alongside movies** and track season-2 and season-3 conversion.
+2. **Diversify beyond the US**, building on India, the UK, Canada, Japan, South Korea and France.
+3. **Close the family/kids gap** (23.4% today); test a 25 to 30% target.
+4. **Move from volume to curation** after the 2019 peak.
+5. **Back local-language originals by format strength:** series from Korea and Japan, movies from India.
+6. **Improve metadata quality** at source so country and director are never placeholders.
+7. **Validate data before acting on outliers.** The apparent Pakistan spike (420 titles) was a placeholder artefact; the real figure is 19.
+
+---
+
+## Limitations and assumptions
+
+- **Partial final year:** data ends 25 Sep 2021, so 2021 counts and growth are understated.
+- **One country per title:** only the first-listed country is kept, so co-productions are hidden.
+- **Pakistan is a lower bound:** a few reclassified rows (for example Humsafar, Khaani) may truly be Pakistani but cannot be separated from the file.
+- **No viewing data:** the dataset describes the catalogue, not audience behaviour. Engagement statements are recommendations to test, not findings.
+- **Assumptions you can edit:** audience grouping (`Lookups`) and region mapping (blue cells on `T3_Country`).
+- **Pivot-style tables:** summaries use formulas rather than native PivotTables so they recalculate anywhere. `Excel_Steps` shows how to build native PivotTables and Slicers on the same table.
+
+---
+
+## Repository contents
+
+```
+.
+|-- Dataset.csv                                  # source data (unchanged)
+|-- Netflix_Data_Visualization_Workbook.xlsx     # full analysis, dashboards and documentation
+`-- README.md                                    # this file
+```
+
+## Skills demonstrated
+
+Data cleaning and validation, Excel Tables, `COUNTIFS`/`SUMIFS`/`AVERAGEIFS`/`MINIFS`/`MAXIFS`, `INDEX/MATCH`, data validation dropdowns, conditional formatting (data bars, rule-based highlighting), native Excel charts, dashboard layout, KPI design, trend analysis and business recommendations.
+
+## Author
+
+Name: *Gatimu Ann*  
+Program: Data Visualization
